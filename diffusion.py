@@ -16,16 +16,23 @@ def heat(u, nt, nx, alpha, L, tmax):
     dx = L / (nx - 1)
     dt = tmax / (nt - 1)
 
-    r = alpha * dt / dx ** 2
-
     for t in range(nt - 1):
-        u = (
-            u[:1]
-            + [
-                r * u[i + 1] + (1 - 2 * r) * u[i] + r * u[i + 1]
-                for i in range(1, len(u) - 1)
-            ]
-            + u[-1:]
-        )
+        u = step(u, dx, dt, alpha)
 
     return u
+
+
+def step(u, dx, dt, alpha):
+    r = alpha * dt / dx ** 2
+
+    if r > 0.5:
+        raise Exception
+
+    return (
+        u[:1]
+        + [
+            r * u[i + 1] + (1 - 2 * r) * u[i] + r * u[i - 1]
+            for i in range(1, len(u) - 1)
+        ]
+        + u[-1:]
+    )
